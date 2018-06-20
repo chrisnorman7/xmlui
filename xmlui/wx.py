@@ -27,7 +27,8 @@ class WXXMLParser(XMLParser):
     """Populate wx.Frame instances from XML."""
 
     def populate_from_root(self, root, frame, parent=no_parent):
-        """Overrides the default populate_from_root to add wx-specific code. In
+        """
+        Overrides the default populate_from_root to add wx-specific code. In
         particular the parent argument.
 
         If parent is no_parent, then parent will be frame.
@@ -45,7 +46,8 @@ class WXXMLParser(XMLParser):
         parent: The parent to use for control creation.
         sizer: The sizer the created control should be added to.
 
-        Everything else is the same."""
+        Everything else is the same.
+        """
         sizer = None
         if parent is no_parent:
             parent = frame

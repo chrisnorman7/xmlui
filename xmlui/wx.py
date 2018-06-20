@@ -146,8 +146,11 @@ class WXXMLParser(XMLParser):
 
     def parse_float(self, node, frame, parent, sizer):
         """Return a float control."""
+        if node.text is None:
+            value = 0.0
+        else:
+            value = float(node.text)
         a = node.attrib
-        value = float(a.get('value', 0.0))
         min_value = a.get('min', None)
         if min_value is not None:
             min_value = float(min_value)
@@ -163,8 +166,11 @@ class WXXMLParser(XMLParser):
 
     def parse_slider(self, node, frame, parent, sizer):
         """Return a slider control."""
+        if node.text is None:
+            value = 0
+        else:
+            value = int(node.text)
         a = node.attrib
-        value = int(a.get('value', 0))
         min_value = int(a.get('min', 0))
         max_value = int(a.get('max', 100))
         return wx.Slider(

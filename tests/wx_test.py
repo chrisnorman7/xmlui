@@ -207,3 +207,15 @@ def test_parse_node():
     assert i.Window is b
     assert i.GetProportion() == 2
     assert i.GetFlag() == wx.ALL
+    f.Destroy()
+
+
+def test_choice():
+    choices = ['First', 'Second', 'Third']
+    root = Element('choice', choices=', '.join(choices))
+    root.text = '1'
+    f = wx.Frame(None)
+    c = xml.parse_node(root, f, f, None)
+    assert c.GetStrings() == choices
+    assert c.GetStringSelection() == choices[1]
+    f.Destroy()

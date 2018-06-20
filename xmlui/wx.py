@@ -192,3 +192,15 @@ class WXXMLParser(XMLParser):
         if default:
             b.SetDefault()
         return b
+
+    def parse_choice(self, node, frame, parent, sizer):
+        """Get a popup button."""
+        choices = node.attrib.get('choices', None)
+        if choices is None:
+            choices = []
+        else:
+            choices = self.get_list(choices, function=str)
+        choice = wx.Choice(parent, choices=choices)
+        if node.text is not None:
+            choice.SetSelection(int(node.text))
+        return choice

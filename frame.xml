@@ -1,0 +1,33 @@
+<frame>
+    <title>Test Frame</title>
+    <sizer orient="vertical" name="main_sizer">
+        <sizer>
+            <label style="st_ellipsize_end">&amp;Username</label>
+            <text name="username" sizer_proportion="1" sizer_flag="grow" style="te_rich2">test</text>
+        </sizer>
+        <sizer>
+            <label style="st_ellipsize_end">&amp;Password</label>
+            <text name="password" sizer_proportion="1" sizer_flag="grow" style="te_password" bind="text_paste:on_paste,text_copy:on_copy"></text>
+        </sizer>
+        <sizer>
+            <label>&amp;Age</label>
+            <integer name="age" sizer_proportion="1" sizer_flag="grow" min="10">18</integer>
+        </sizer>
+        <sizer>
+            <label>&amp;Height (in metres)</label>
+            <float name="height" sizer_proportion="1" sizer_flag="grow" digits="2" min="0.5" max="2.5" increment="0.1">1.5</float>
+        </sizer>
+        <sizer>
+            <label>Rating</label>
+            <slider style="sl_horizontal,sl_inverse" name="rating" min="0" max="5">3</slider>
+        </sizer>
+        <sizer>
+            <label>Agree</label>
+            <checkbox name="agree" sizer_proportion="1" sizer_flag="grow" label="I &amp;Agree"></checkbox>
+        </sizer>
+        <sizer sizer_proportion="1" sizer_flag="grow">
+            <button name="login" label="&amp;Login" default="1" bind="button:on_login"></button>
+            <button name="cancel" label="&amp;Cancel" bind="button:close"></button>
+        </sizer>
+    </sizer>
+</frame>

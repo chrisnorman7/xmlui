@@ -310,6 +310,9 @@ def test_table_with_columns():
     # Only wx.ListCtrl instances wiuth a style of wx.LC_REPORT can contain
     # columns.
     root = Element('table', style='lc_report')
+    value = Element('value')
+    value.text = '1'
+    root.append(value)
     col1 = Element('column')
     col1.text = 'First Column'
     col2 = Element('column')
@@ -320,7 +323,7 @@ def test_table_with_columns():
     assert col1.text is not None
     assert col2.text is not None
     assert col3.text is not None
-    assert len(root) == 3
+    assert len(root) == 4
     item1 = Element('item')
     item1.text = '1, 2, 3'
     item2 = Element('item')
@@ -328,7 +331,7 @@ def test_table_with_columns():
     assert item1.text is not None
     assert item2.text is not None
     root.extend([item1, item2])
-    assert len(root) == 5
+    assert len(root) == 6
     f = wx.Frame(None)
     c = xml.parse_node(root, f, f, None)
     assert c.GetItemCount() == 2
@@ -336,4 +339,5 @@ def test_table_with_columns():
         words = item.text.split(', ')
         for y in range(3):
             assert c.GetItem(x, y).Text == words[y]
+    assert c.GetFocusedItem() == int(value.text)
     f.Destroy()

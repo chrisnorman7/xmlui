@@ -273,10 +273,13 @@ def test_table():
     col1 = Element('column')
     col1.text = 'First Column'
     col2 = Element('column')
-    col2.text == 'Second Column'
+    col2.text = 'Second Column'
     col3 = Element('column')
     col3.text = 'Third Column'
     root.extend([col1, col2, col3])
+    assert col1.text is not None
+    assert col2.text is not None
+    assert col3.text is not None
     assert len(root) == 3
     c = xml.parse_node(root, f, f, None)
     assert isinstance(c, wx.ListCtrl)

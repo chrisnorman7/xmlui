@@ -10,6 +10,14 @@ class DuplicateSizerError(Exception):
     """There is already a main sizer."""
 
 
+class InvalidTagError(Exception):
+    """Invalid tag found."""
+
+
+class NoValueError(Exception):
+    """No value was provided where one should be."""
+
+
 class NoParent:
     """Used to specify a default panel should not be created."""
 
@@ -204,3 +212,54 @@ class WXXMLParser(XMLParser):
         if node.text is not None:
             choice.SetSelection(int(node.text))
         return choice
+
+    def parse_list(self, node, frame, parent, sizer):
+        """Return a simple list box."""
+        a = node.attrib
+        choices = a.get('choices', None)
+        if choices is None:
+            choices = []
+        else:
+            choices = self.get_list(choices, function=str)
+        b = wx.ListBox(parent, choices=choices)
+        if node.text is not None:
+            b.SetSelection(int(node.text))
+        return b
+
+    def parse_table(self, node, frame, parent, sizer):
+        """Return a list control with columns."""
+        c = wx.ListCtrl(parent)
+        value = None
+        items = []
+        for tag in node:
+            if tag.tag == 'value':
+                value = int(tag.text)
+            elif tag.tag == 'column':
+                args = self.parse_column(tag, frame, parent, sizer)
+                c.AppendColumn(*args)
+            elif tag.tag == 'item':
+                item = self.parse_item(tag, frame, parent, sizer)
+                items.append(item)
+            else:
+                raise InvalidTagError(tag)
+        for item in items:
+            c.Append(item)
+        if value is not None:
+            c.Focus(value)
+            c.Select(value)
+        return c
+
+    def parse_column(self, node, frame, parent, sizer):
+        """Return args that can be sent to wx.ListCtrl.AppendColumn."""
+        heading = node.text
+        if heading is None:
+            raise NoValueError(node)
+        a = node.attrib
+        format = a.get('format', 'list_format_left')
+        format = self.get_flags(format)
+        width = int(a.get('width', -1))
+        return (heading, format, width)
+
+    def parse_item(self, node, frame, parent, sizer):
+        """Parse a list item."""
+        return self.get_list(node.text, function=str)

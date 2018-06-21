@@ -5,7 +5,10 @@ from xml.etree.ElementTree import Element
 import wx
 from wx.lib.intctrl import IntCtrl
 from wx.lib.agw.floatspin import FloatSpin
-from xmlui.wx import WXXMLParser, DuplicateSizerError, NoParent, no_parent
+from xmlui.wx import (
+    WXXMLParser, DuplicateSizerError, NoParent, no_parent, NoValueError,
+    InvalidTagError
+)
 
 app = wx.App()  # Keep wx happy.
 
@@ -218,4 +221,63 @@ def test_choice():
     c = xml.parse_node(root, f, f, None)
     assert c.GetStrings() == choices
     assert c.GetStringSelection() == choices[1]
+    f.Destroy()
+
+
+def test_list():
+    root = Element('list', choices='First, Second, Third')
+    root.text = '1'
+    f = wx.Frame(None)
+    c = xml.parse_node(root, f, f, None)
+    assert isinstance(c, wx.ListBox)
+    assert c.GetStrings() == ['First', 'Second', 'Third']
+    assert c.GetStringSelection() == 'Second'
+    f.Destroy()
+
+
+def test_column():
+    root = Element('column')
+    args = (root, None, None, None)
+    with raises(NoValueError):
+        xml.parse_column(*args)
+    root.text = 'Test'
+    heading, format, width = xml.parse_column(*args)
+    assert heading == root.text
+    assert format == wx.LIST_FORMAT_LEFT
+    assert width == -1
+    root.attrib['width'] = '1234'
+    heading, format, width = xml.parse_column(*args)
+    assert width == 1234
+    root.attrib['format'] = 'list_format_right'
+    heading, format, width = xml.parse_column(*args)
+    assert format == wx.LIST_FORMAT_RIGHT
+
+
+def test_item():
+    root = Element('item')
+    root.text = 'First, Second, Third'
+    i = xml.parse_item(root, None, None, None)
+    assert i == ['First', 'Second', 'Third']
+
+
+def test_table():
+    # c.GetFocusedItem()
+    root = Element('table')
+    fail = Element('fails')
+    root.append(fail)
+    f = wx.Frame(None)
+    with raises(InvalidTagError) as exc:
+        xml.parse_node(root, f, f, None)
+    assert exc.value.args == (fail,)
+    del root[0]
+    col1 = Element('column')
+    col1.text = 'First Column'
+    col2 = Element('column')
+    col2.text == 'Second Column'
+    col3 = Element('column')
+    col3.text = 'Third Column'
+    root.extend([col1, col2, col3])
+    assert len(root) == 3
+    c = xml.parse_node(root, f, f, None)
+    assert isinstance(c, wx.ListCtrl)
     f.Destroy()

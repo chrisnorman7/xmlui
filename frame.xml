@@ -1,6 +1,18 @@
 <frame>
-    <title>Test Frame</title>
+    <title>Pretend Login</title>
     <sizer orient="vertical" name="main_sizer">
+        <sizer>
+            <label>&amp;Servers</label>
+            <table sizer_proportion="1" style="lc_report">
+                <value>2</value>
+                <column>Name</column>
+                <column>Hostname</column>
+                <column>Port</column>
+                <item>Google,google.com,80</item>
+                <item>BBC,bbc.co.uk,80</item>
+                <item>Mindspace,mindspace.site,6464</item>
+            </table>
+        </sizer>
         <sizer>
             <label style="st_ellipsize_end">&amp;Username</label>
             <text name="username" sizer_proportion="1" sizer_flag="grow" style="te_rich2">test</text>

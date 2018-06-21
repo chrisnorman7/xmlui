@@ -271,7 +271,7 @@ def test_invalid_tag():
     f.Destroy()
 
 
-def test_table():
+def test_table_empty():
     root = Element('table')
     col1 = Element('column')
     col1.text = 'First Column'
@@ -291,4 +291,49 @@ def test_table():
     for x, node in enumerate((col1, col2, col3)):
         li = c.GetColumn(x)
         assert li.Text == node.text
+    f.Destroy()
+
+
+def test_table_items_no_columns():
+    root = Element('table')
+    item = Element('item')
+    item.text = 'Testing stuff'
+    root.append(item)
+    f = wx.Frame(None)
+    c = xml.parse_node(root, f, f, None)
+    assert c.GetColumnCount() == 0
+    assert c.GetItemCount() == 1
+    assert c.GetItem(0).Text == item.text
+
+
+def test_table_with_columns():
+    # Only wx.ListCtrl instances wiuth a style of wx.LC_REPORT can contain
+    # columns.
+    root = Element('table', style='lc_report')
+    col1 = Element('column')
+    col1.text = 'First Column'
+    col2 = Element('column')
+    col2.text = 'Second Column'
+    col3 = Element('column')
+    col3.text = 'Third Column'
+    root.extend([col1, col2, col3])
+    assert col1.text is not None
+    assert col2.text is not None
+    assert col3.text is not None
+    assert len(root) == 3
+    item1 = Element('item')
+    item1.text = '1, 2, 3'
+    item2 = Element('item')
+    item2.text = '4, 5, 6'
+    assert item1.text is not None
+    assert item2.text is not None
+    root.extend([item1, item2])
+    assert len(root) == 5
+    f = wx.Frame(None)
+    c = xml.parse_node(root, f, f, None)
+    assert c.GetItemCount() == 2
+    for x, item in enumerate([item1, item2]):
+        words = item.text.split(', ')
+        for y in range(3):
+            assert c.GetItem(x, y).Text == words[y]
     f.Destroy()

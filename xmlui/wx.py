@@ -228,7 +228,11 @@ class WXXMLParser(XMLParser):
 
     def parse_table(self, node, frame, parent, sizer):
         """Return a list control with columns."""
-        c = wx.ListCtrl(parent)
+        # We have to include the style with this control, otherwise adding
+        # items with Append will fail when there are multiple columns, and the
+        # default style is specified.
+        style = self.get_flags(node.attrib.pop('style', 'lc_icon'))
+        c = wx.ListCtrl(parent, style=style)
         value = None
         items = []
         for tag in node:

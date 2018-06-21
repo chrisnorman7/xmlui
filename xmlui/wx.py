@@ -237,7 +237,7 @@ class WXXMLParser(XMLParser):
         items = []
         for tag in node:
             if tag.tag == 'value':
-                value = int(tag.text)
+                value = self.parse_value(tag, frame, parent, sizer)
             elif tag.tag == 'column':
                 args = self.parse_column(tag, frame, parent, sizer)
                 c.AppendColumn(*args)
@@ -252,6 +252,10 @@ class WXXMLParser(XMLParser):
             c.Focus(value)
             c.Select(value)
         return c
+
+    def parse_value(self, node, frame, parent, sizer):
+        """Get a value as an integer."""
+        return int(node.text)
 
     def parse_column(self, node, frame, parent, sizer):
         """Return args that can be sent to wx.ListCtrl.AppendColumn."""

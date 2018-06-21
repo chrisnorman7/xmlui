@@ -235,6 +235,12 @@ def test_list():
     f.Destroy()
 
 
+def test_value():
+    root = Element('value')
+    root.text = '1'
+    assert xml.parse_value(root, None, None, None) == 1
+
+
 def test_column():
     root = Element('column')
     args = (root, None, None, None)

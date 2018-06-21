@@ -260,8 +260,7 @@ def test_item():
     assert i == ['First', 'Second', 'Third']
 
 
-def test_table():
-    # c.GetFocusedItem()
+def test_invalid_tag():
     root = Element('table')
     fail = Element('fails')
     root.append(fail)
@@ -269,7 +268,11 @@ def test_table():
     with raises(InvalidTagError) as exc:
         xml.parse_node(root, f, f, None)
     assert exc.value.args == (fail,)
-    del root[0]
+    f.Destroy()
+
+
+def test_table():
+    root = Element('table')
     col1 = Element('column')
     col1.text = 'First Column'
     col2 = Element('column')
@@ -281,6 +284,11 @@ def test_table():
     assert col2.text is not None
     assert col3.text is not None
     assert len(root) == 3
+    f = wx.Frame(None)
     c = xml.parse_node(root, f, f, None)
     assert isinstance(c, wx.ListCtrl)
+    assert c.GetColumnCount() == 3
+    for x, node in enumerate((col1, col2, col3)):
+        li = c.GetColumn(x)
+        assert li.Text == node.text
     f.Destroy()
